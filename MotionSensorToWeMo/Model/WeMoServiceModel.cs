@@ -10,28 +10,39 @@
 //*********************************************************
 
 using IoT.WeMo.Service;
+using MotionSensorToWeMo.Util;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
-using WeMoLib.Util;
 using Windows.UI.Core;
+using IoT.WeMo.Data;
 
-namespace IoT.WeMo.Model
+namespace MotionSensorToWeMo.Model
 {
-    public class WeMoViewModel : INotifyPropertyChanged
+    public class WeMoServiceModel : INotifyPropertyChanged, IWeMoServiceCallback
     {
         private ObservableCollection<DeviceModel> _devices = new ObservableSetCollection<DeviceModel>();
         private Dictionary<string, DeviceModel> _devicesByName = new Dictionary<string, DeviceModel>();
         private ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
-        private WeMoService _service;
         private bool _scanningNetwork;
+        private WeMoService _wemoService;
+
+        public WeMoService WeMoService
+        {
+            get
+            {
+                return _wemoService;
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public WeMoViewModel(WeMoService service)
+        public WeMoServiceModel(WeMoService service)
         {
-            this._service = service;
+            this._wemoService = service;
+            this._wemoService.ServiceCallback = this;
         }
 
         public bool ScanningNetwork
@@ -45,12 +56,7 @@ namespace IoT.WeMo.Model
                 _scanningNetwork = value;
                 if (PropertyChanged != null)
                 {
-                    Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                                CoreDispatcherPriority.High,
-                                () =>
-                                {
-                                    PropertyChanged(this, new PropertyChangedEventArgs("ScanningNetwork"));
-                                });
+                    PropertyChanged(this, new PropertyChangedEventArgs("ScanningNetwork"));
                 }
             }
         }
@@ -63,18 +69,6 @@ namespace IoT.WeMo.Model
             }
         }
 
-        public void Add(string deviceName, string host, int port, string location, bool state)
-        {
-            // perform the update on the UI thread
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                        CoreDispatcherPriority.High,
-                        () =>
-                        {
-                            DeviceModel device = new DeviceModel(deviceName, host, port, location, state);
-                            InternalAdd(device);
-                        });
-        }
-
         void InternalAdd(DeviceModel device)
         {
             _cacheLock.EnterWriteLock();
@@ -82,10 +76,17 @@ namespace IoT.WeMo.Model
             {
                 if (!Devices.Contains(device))
                 {
-                    device.PropertyChanged += new PropertyChangedEventHandler(device_PropertyChanged);
                     _devices.Add(device);
+                    _devicesByName[device.DeviceName] = device;
                 }
-                _devicesByName[device.DeviceName] = device;
+                else
+                {
+                    DeviceModel model = Devices.FirstOrDefault(x => x.DeviceName == device.DeviceName);
+                    if (model != null)
+                    {
+                        model.State = device.State;
+                    }
+                }
             }
             finally
             {
@@ -93,12 +94,26 @@ namespace IoT.WeMo.Model
             }
         }
 
-        private void device_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void OnDeviceFound(WeMoDevice device)
         {
-            if (e.PropertyName.Equals("State"))
-            {
-                _service.SendDeviceState((DeviceModel)sender);
-            }
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        CoreDispatcherPriority.High,
+                        () =>
+                        {
+                            InternalAdd(new DeviceModel(device, this));
+                        }
+            );
+        }
+
+        public void OnNetworkScanningChange(bool active)
+        {
+            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                        CoreDispatcherPriority.High,
+                        () =>
+                        {
+                            this.ScanningNetwork = active;
+                        }
+            );
         }
     }
 }

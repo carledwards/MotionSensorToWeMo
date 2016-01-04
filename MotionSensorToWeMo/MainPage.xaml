@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MotionSensorToWeMo"
     xmlns:util="using:MotionSensorToWeMo.Util"
-    xmlns:wemomodel="using:IoT.WeMo.Model"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -25,17 +24,17 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" x:Name="textBlock1" TextWrapping="Wrap" Text="Devices Found on Network"/>
-                <ProgressBar Grid.Row="0" Grid.Column="1" IsIndeterminate="True" Visibility="{x:Bind WeMoViewModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
-                <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" ItemsSource="{x:Bind WeMoViewModel.Devices, Mode=OneWay}" BorderThickness="1" BorderBrush="Black">
+                <ProgressBar Grid.Row="0" Grid.Column="1" IsIndeterminate="True" Visibility="{x:Bind WeMoServiceModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" ItemsSource="{x:Bind WeMoServiceModel.Devices, Mode=OneWay}" BorderThickness="1" BorderBrush="Black">
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="wemomodel:DeviceModel">
+                        <DataTemplate x:DataType="local:Model.DeviceModel">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="125"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{x:Bind DeviceName}" VerticalAlignment="Center"/>
-                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind State}" Toggled="{x:Bind ToggleState}" VerticalAlignment="Center"/>
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind State, Mode=TwoWay}" VerticalAlignment="Center"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

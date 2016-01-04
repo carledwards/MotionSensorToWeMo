@@ -9,10 +9,10 @@
 //
 //*********************************************************
 
+using MotionSensorToWeMo.Util;
 using System;
 using System.ComponentModel;
 using System.Threading;
-using WeMoLib.Util;
 using Windows.UI.Core;
 
 namespace MotionSensorToWeMo.Model

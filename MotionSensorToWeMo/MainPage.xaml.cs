@@ -12,7 +12,6 @@
 using Windows.UI.Xaml;
 using System;
 using Windows.UI.Xaml.Controls;
-using IoT.WeMo.Model;
 using MotionSensorToWeMo.Model;
 using IoT.WeMo.Service;
 using Windows.ApplicationModel.DataTransfer;
@@ -22,7 +21,7 @@ namespace MotionSensorToWeMo
 {
     public sealed partial class MainPage : Page
     {
-        public WeMoViewModel WeMoViewModel { get; set; }
+        public WeMoServiceModel WeMoServiceModel { get; set; }
         public MotionSensorModel MotionSensorModel { get; set; }
         public ProgramModel ProgramModel { get; set; }
         private WeMoService _wemo = new WeMoService();
@@ -30,7 +29,7 @@ namespace MotionSensorToWeMo
         public MainPage()
         {
             this.InitializeComponent();
-            this.WeMoViewModel = _wemo.Model;
+            this.WeMoServiceModel = new WeMoServiceModel(_wemo);
             this.ProgramModel = new ProgramModel();
             this.MotionSensorModel = new MotionSensorModel();
             this.MotionSensorModel.PropertyChanged += MotionSensorModel_PropertyChanged;

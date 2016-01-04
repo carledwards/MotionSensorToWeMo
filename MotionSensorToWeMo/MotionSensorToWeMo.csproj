@@ -101,10 +101,13 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\DeviceModel.cs" />
     <Compile Include="Model\MotionSensorModel.cs" />
     <Compile Include="Model\ProgramModel.cs" />
+    <Compile Include="Model\WeMoServiceModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Util\ObservableSetCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

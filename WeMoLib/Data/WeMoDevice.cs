@@ -8,12 +8,12 @@
 // PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //*********************************************************
-using System;
-using System.ComponentModel;
 
-namespace IoT.WeMo.Model
+using System;
+
+namespace IoT.WeMo.Data
 {
-    public class DeviceModel : INotifyPropertyChanged, IEquatable<DeviceModel>
+    public class WeMoDevice
     {
         private String _deviceName;
         private int _port;
@@ -22,9 +22,7 @@ namespace IoT.WeMo.Model
         private string _uri;
         private bool _state;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public DeviceModel(string deviceName, string ipAddress, int port, string uri, bool state)
+        public WeMoDevice(string deviceName, string ipAddress, int port, string uri, bool state)
         {
             this._deviceName = deviceName;
             this._ipAddress = ipAddress;
@@ -34,12 +32,9 @@ namespace IoT.WeMo.Model
             this._timeStamp = DateTime.Now;
         }
 
-        public string ButtonTitle
+        public IWeMoDeviceCallback Callback
         {
-            get
-            {
-                return _state ? "Turn Off" : "Turn On";
-            }
+            get; set;
         }
 
         public string DeviceName
@@ -77,10 +72,10 @@ namespace IoT.WeMo.Model
                 if (_state != (bool)value)
                 {
                     _state = (bool)value;
-                    if (PropertyChanged != null)
+                    IWeMoDeviceCallback callback = Callback;
+                    if (callback != null)
                     {
-                        PropertyChanged(this, new PropertyChangedEventArgs("State"));
-                        PropertyChanged(this, new PropertyChangedEventArgs("ButtonTitle"));
+                        callback.OnStateChange(this, value);
                     }
                 }
             }
@@ -100,17 +95,6 @@ namespace IoT.WeMo.Model
             {
                 return _uri;
             }
-        }
-
-        public void ToggleState()
-        {
-            this.State = !this.State;
-        }
-
-        public bool Equals(DeviceModel other)
-        {
-            if (other == null) return false;
-            return (this.DeviceName.Equals(other.DeviceName));
         }
     }
 }

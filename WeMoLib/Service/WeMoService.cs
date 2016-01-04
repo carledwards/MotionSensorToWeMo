@@ -9,7 +9,7 @@
 //
 //*********************************************************
 
-using IoT.WeMo.Model;
+using IoT.WeMo.Data;
 using IoT.WeMo.UPnP;
 using System;
 using System.Collections.Generic;
@@ -42,13 +42,13 @@ namespace IoT.WeMo.Service
         private const string WemoUrlTemplate = "http://{0}:{1}/upnp/control/basicevent1";
 
         private SSDP _ssdp = null;
-        public WeMoViewModel Model { get; set; }
 
         public WeMoService()
         {
-            Model = new WeMoViewModel(this);
             _ssdp = new SSDP(OnDeviceFound, OnScanningNetwork, DeviceRefreshIntervalInSeconds);
         }
+
+        public IWeMoServiceCallback ServiceCallback { get; set; }
 
         private static Dictionary<string, string> DictionaryFromXDocument(XDocument doc)
         {
@@ -110,7 +110,12 @@ namespace IoT.WeMo.Service
                     Dictionary<string, string> result = await MakeApiRequest(wemoUri.Host, wemoUri.Port, "GetBinaryState",
                         GetBinaryStatePayload);
                     bool state = result.ContainsKey("BinaryState") && result["BinaryState"] == "1";
-                    Model.Add(friendlyName, wemoUri.Host, wemoUri.Port, location, state);
+
+                    IWeMoServiceCallback callback = ServiceCallback;
+                    if (callback != null)
+                    {
+                        callback.OnDeviceFound(new WeMoDevice(friendlyName, wemoUri.Host, wemoUri.Port, location, state));
+                    }
                 }
             }
             catch (Exception ex)
@@ -127,7 +132,11 @@ namespace IoT.WeMo.Service
 
         public void OnScanningNetwork(bool active)
         {
-            Model.ScanningNetwork = active;
+            IWeMoServiceCallback callback = ServiceCallback;
+            if (callback != null)
+            {
+                callback.OnNetworkScanningChange(active);
+            }
         }
 
         private async Task<Dictionary<string, string>> MakeApiRequest(string host, int port, string soapActionName, string payload)
@@ -155,7 +164,7 @@ namespace IoT.WeMo.Service
             }
         }
 
-        public void SendDeviceState(DeviceModel device)
+        public void SendDeviceState(WeMoDevice device)
         {
             if (device == null)
             {

@@ -9,17 +9,13 @@
 //
 //*********************************************************
 
-using System.Collections.ObjectModel;
+using IoT.WeMo.Data;
 
-namespace WeMoLib.Util
+namespace IoT.WeMo.Service
 {
-    public class ObservableSetCollection<T> : ObservableCollection<T>
+    public interface IWeMoServiceCallback
     {
-        public void Append(T item)
-        {
-            // avoid duplicates
-            if (Contains(item)) return;
-            base.Add(item);
-        }
+        void OnDeviceFound(WeMoDevice device);
+        void OnNetworkScanningChange(bool active);
     }
 }
