@@ -11,6 +11,7 @@
 
 using MotionSensorToWeMo.Util;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Windows.UI.Core;
@@ -24,11 +25,14 @@ namespace MotionSensorToWeMo.Model
         private string _status;
         private bool _isRunning = false;
         private Timer _endProgramTimer;
+        private List<DeviceModel> _devicesTriggered = new List<DeviceModel>();
+        private WeMoServiceModel _serviceModel;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ProgramModel()
+        public ProgramModel(WeMoServiceModel serviceModel)
         {
+            _serviceModel = serviceModel;
             _endProgramTimer = new Timer(Timer_ProgramComplete, null, Timeout.Infinite, Timeout.Infinite);
             _deviceNames.CollectionChanged += _deviceNames_CollectionChanged;
         }
@@ -129,11 +133,25 @@ namespace MotionSensorToWeMo.Model
 
         public void RunProgram()
         {
+            if (IsRunning)
+            {
+                return;
+            }
             if (!ValidateAndUpdateStatus())
             {
                 return;
             }
+            _devicesTriggered.Clear();
             IsRunning = true;
+            foreach (string deviceName in _deviceNames)
+            {
+                DeviceModel device = _serviceModel.GetDeviceByName(deviceName);
+                if (device != null && !device.State)
+                {
+                    device.State = true;
+                    _devicesTriggered.Add(device);
+                }
+            }
             _endProgramTimer.Change(Int32.Parse(DurationInSeconds)*1000, Timeout.Infinite);
         }
 
@@ -148,6 +166,11 @@ namespace MotionSensorToWeMo.Model
                         CoreDispatcherPriority.High,
                         () =>
                         {
+                            foreach (DeviceModel device in _devicesTriggered)
+                            {
+                                device.State = false;
+                            }
+                            _devicesTriggered.Clear();
                             IsRunning = false;
                         });
         }

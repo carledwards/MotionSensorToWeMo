@@ -30,7 +30,7 @@ namespace MotionSensorToWeMo
         {
             this.InitializeComponent();
             this.WeMoServiceModel = new WeMoServiceModel(_wemo);
-            this.ProgramModel = new ProgramModel();
+            this.ProgramModel = new ProgramModel(this.WeMoServiceModel);
             this.MotionSensorModel = new MotionSensorModel();
             this.MotionSensorModel.PropertyChanged += MotionSensorModel_PropertyChanged;
         }

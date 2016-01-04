@@ -45,6 +45,11 @@ namespace MotionSensorToWeMo.Model
             this._wemoService.ServiceCallback = this;
         }
 
+        public DeviceModel GetDeviceByName(string name)
+        {
+            return _devicesByName[name];
+        }
+
         public bool ScanningNetwork
         {
             get
