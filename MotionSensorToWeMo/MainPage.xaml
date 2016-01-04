@@ -3,25 +3,104 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MotionSensorToWeMo"
+    xmlns:util="using:MotionSensorToWeMo.Util"
     xmlns:wemomodel="using:IoT.WeMo.Model"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView x:Name="wemoDevices" ItemsSource="{x:Bind ViewModel.Devices, Mode=OneWay}"  HorizontalAlignment="Left" Height="183" Margin="102,83,0,0" VerticalAlignment="Top" Width="253" BorderThickness="1" BorderBrush="Black">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="wemomodel:DeviceModel">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Bind DeviceName}"/>
-                        <Button Grid.Column="1" Content="{x:Bind ButtonTitle, Mode=OneWay}" Click="{x:Bind ToggleState}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </Grid>
+    <Page.Resources>
+        <util:BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+    </Page.Resources>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" x:Name="textBlock1" TextWrapping="Wrap" Text="Devices Found on Network"/>
+                <ProgressBar Grid.Row="0" Grid.Column="1" IsIndeterminate="True" Visibility="{x:Bind WeMoViewModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" ItemsSource="{x:Bind WeMoViewModel.Devices, Mode=OneWay}" BorderThickness="1" BorderBrush="Black">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="wemomodel:DeviceModel">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="125"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{x:Bind DeviceName}" VerticalAlignment="Center"/>
+                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind State}" Toggled="{x:Bind ToggleState}" VerticalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" x:Name="textBlock2" TextWrapping="Wrap" Text="Motion Sensor" />
+                <Grid Grid.Row="1" BorderBrush="Black" BorderThickness="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" x:Name="textBlock3" TextWrapping="Wrap" Text="Pin Number:" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <TextBox Grid.Column="1" Grid.Row="0" x:Name="motionSensorPinNumber" TextWrapping="Wrap" Text="{x:Bind MotionSensorModel.PinNumber, Mode=TwoWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1" x:Name="textBlock" TextWrapping="Wrap" Text="Pin State:" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <TextBlock Grid.Column="1" Grid.Row="1" x:Name="motionSensorPinState" TextWrapping="Wrap" Text="{x:Bind MotionSensorModel.PinState, Mode=OneWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <CheckBox Grid.Column="0" Grid.Row="2" x:Name="checkBox" Content="Emulate Gpio" IsChecked="{x:Bind MotionSensorModel.EmulateGpio, Mode=TwoWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <Button Grid.Column="1" Grid.Row="2" x:Name="button" Content="Trigger" Visibility="{x:Bind MotionSensorModel.AllowImpersonatingMotionSensor, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" Click="{x:Bind MotionSensorModel.TriggerMotionSensor}" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                </Grid>
+            </Grid>
+        </StackPanel>
+        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Program" />
+                <Grid Grid.Row="1" BorderBrush="Black" BorderThickness="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Text="Devices:"></TextBlock>
+                    <ListView x:Name="programDeviceList" AllowDrop="True" DragOver="programDeviceList_DragOver" Drop="programDeviceList_Drop" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{x:Bind ProgramModel.Devices, Mode=OneWay}" MinHeight="25" BorderBrush="Black" BorderThickness="1" Margin="4,2,4,2">
+                    
+                    </ListView>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Duration:" TextWrapping="Wrap" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{x:Bind ProgramModel.DurationInSeconds, Mode=TwoWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Status:" TextWrapping="Wrap" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ProgramModel.Status, Mode=OneWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                </Grid>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
 </Page>

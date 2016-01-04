@@ -23,7 +23,7 @@ namespace IoT.WeMo.Service
 {
     public class WeMoService
     {
-        private const int DeviceRefreshIntervalInSeconds = 20;
+        private const int DeviceRefreshIntervalInSeconds = 15;
         private const string SetBinaryStatePayloadTemplate = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         + "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
         + "\n <s:Body>"
@@ -46,8 +46,8 @@ namespace IoT.WeMo.Service
 
         public WeMoService()
         {
-            _ssdp = new SSDP(OnDeviceFound, DeviceRefreshIntervalInSeconds);
             Model = new WeMoViewModel(this);
+            _ssdp = new SSDP(OnDeviceFound, OnScanningNetwork, DeviceRefreshIntervalInSeconds);
         }
 
         private static Dictionary<string, string> DictionaryFromXDocument(XDocument doc)
@@ -120,9 +120,14 @@ namespace IoT.WeMo.Service
             }
         }
 
-        public void OnDeviceFound(string location)
+        public async void OnDeviceFound(string location)
         {
-            ThreadPool.RunAsync(new WorkItemHandler((IAsyncAction) => ResolveDevice(location)));
+            await ThreadPool.RunAsync(new WorkItemHandler((IAsyncAction) => ResolveDevice(location)));
+        }
+
+        public void OnScanningNetwork(bool active)
+        {
+            Model.ScanningNetwork = active;
         }
 
         private async Task<Dictionary<string, string>> MakeApiRequest(string host, int port, string soapActionName, string payload)

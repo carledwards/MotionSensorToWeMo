@@ -14,30 +14,45 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
+using WeMoLib.Util;
 using Windows.UI.Core;
 
 namespace IoT.WeMo.Model
 {
-    public class ObservableSetCollection<T> : ObservableCollection<T>
-    {
-        public void Append(T item)
-        {
-            // avoid duplicates
-            if (Contains(item)) return;
-            base.Add(item);
-        }
-    }
-
-    public class WeMoViewModel
+    public class WeMoViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<DeviceModel> _devices = new ObservableSetCollection<DeviceModel>();
         private Dictionary<string, DeviceModel> _devicesByName = new Dictionary<string, DeviceModel>();
         private ReaderWriterLockSlim _cacheLock = new ReaderWriterLockSlim();
         private WeMoService _service;
+        private bool _scanningNetwork;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public WeMoViewModel(WeMoService service)
         {
             this._service = service;
+        }
+
+        public bool ScanningNetwork
+        {
+            get
+            {
+                return _scanningNetwork;
+            }
+            set
+            {
+                _scanningNetwork = value;
+                if (PropertyChanged != null)
+                {
+                    Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                                CoreDispatcherPriority.High,
+                                () =>
+                                {
+                                    PropertyChanged(this, new PropertyChangedEventArgs("ScanningNetwork"));
+                                });
+                }
+            }
         }
 
         public ObservableCollection<DeviceModel> Devices

@@ -9,21 +9,75 @@
 //
 //*********************************************************
 
-using IoT.WeMo.Model;
-using IoT.WeMo.Service;
+using Windows.UI.Xaml;
+using System;
 using Windows.UI.Xaml.Controls;
+using IoT.WeMo.Model;
+using MotionSensorToWeMo.Model;
+using IoT.WeMo.Service;
+using Windows.ApplicationModel.DataTransfer;
+using System.ComponentModel;
 
 namespace MotionSensorToWeMo
 {
     public sealed partial class MainPage : Page
     {
-        public WeMoViewModel ViewModel { get; set; }
-        private WeMoService _wemo = new WeMoService(); 
+        public WeMoViewModel WeMoViewModel { get; set; }
+        public MotionSensorModel MotionSensorModel { get; set; }
+        public ProgramModel ProgramModel { get; set; }
+        private WeMoService _wemo = new WeMoService();
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.ViewModel = _wemo.Model;
+            this.WeMoViewModel = _wemo.Model;
+            this.ProgramModel = new ProgramModel();
+            this.MotionSensorModel = new MotionSensorModel();
+            this.MotionSensorModel.PropertyChanged += MotionSensorModel_PropertyChanged;
+        }
+
+        private void ToggleSwitch_Toggled(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+        }
+
+        private void programDeviceList_DragOver(object sender, Windows.UI.Xaml.DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.Text))
+            {
+                e.AcceptedOperation = DataPackageOperation.Copy;
+            }
+        }
+
+        private async void programDeviceList_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.Text))
+            {
+                string name = await e.DataView.GetTextAsync();
+                this.ProgramModel.Devices.Append(name);
+                e.AcceptedOperation = DataPackageOperation.Copy;
+            }
+        }
+
+        private void foundDeviceList_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            var deviceModel = e.Items[0];
+            if (deviceModel is DeviceModel)
+            {
+                e.Data.SetText((deviceModel as DeviceModel).DeviceName);
+                e.Data.RequestedOperation = DataPackageOperation.Copy;
+            }
+            else
+            {
+                e.Data.RequestedOperation = DataPackageOperation.None;
+            }
+        }
+
+        private void MotionSensorModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Triggered"))
+            {
+                ProgramModel.RunProgram();
+            }
         }
     }
 }
