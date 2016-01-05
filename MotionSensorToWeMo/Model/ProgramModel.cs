@@ -13,11 +13,13 @@ using MotionSensorToWeMo.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using System.Threading;
 using Windows.UI.Core;
 
 namespace MotionSensorToWeMo.Model
 {
+    [DataContract]
     public class ProgramModel : INotifyPropertyChanged
     {
         private ObservableSetCollection<string> _deviceNames = new ObservableSetCollection<string>();
@@ -25,23 +27,37 @@ namespace MotionSensorToWeMo.Model
         private string _status;
         private bool _isRunning = false;
         private Timer _endProgramTimer;
-        private List<DeviceModel> _devicesTriggered = new List<DeviceModel>();
+        private List<DeviceModel> _devicesTriggered;
         private WeMoServiceModel _serviceModel;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ProgramModel(WeMoServiceModel serviceModel)
+        public ProgramModel()
+        {
+        }
+
+        public void Initialize(WeMoServiceModel serviceModel)
         {
             _serviceModel = serviceModel;
             _endProgramTimer = new Timer(Timer_ProgramComplete, null, Timeout.Infinite, Timeout.Infinite);
             _deviceNames.CollectionChanged += _deviceNames_CollectionChanged;
+            _devicesTriggered = new List<DeviceModel>();
         }
 
+        [DataMember]
         public ObservableSetCollection<string> Devices
         {
             get
             {
                 return this._deviceNames;
+            }
+            set
+            {
+                this._deviceNames = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+                }
             }
         }
 
@@ -61,6 +77,7 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
+        [DataMember]
         public string DurationInSeconds
         {
             get
@@ -78,6 +95,10 @@ namespace MotionSensorToWeMo.Model
                     }
                 }
                 ValidateAndUpdateStatus();
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+                }
             }
         }
 
@@ -158,6 +179,10 @@ namespace MotionSensorToWeMo.Model
         private void _deviceNames_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             ValidateAndUpdateStatus();
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+            }
         }
 
         private void Timer_ProgramComplete(object stateInfo)

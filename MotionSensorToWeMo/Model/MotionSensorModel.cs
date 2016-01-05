@@ -11,15 +11,17 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using Windows.UI.Core;
 using WindowsDevices.Gpio;
 
 namespace MotionSensorToWeMo.Model
 {
+    [DataContract]
     public class MotionSensorModel : INotifyPropertyChanged
     {
         private IGpioPin _sensorPin;
-        private bool _emulateGpio;
+        private bool _emulateGpio = true;
         private string _pinNumber;
         private string _errorMessage;
         private IGpioController _controller;
@@ -28,7 +30,7 @@ namespace MotionSensorToWeMo.Model
 
         public MotionSensorModel()
         {
-            EmulateGpio = true;
+            Initialize();
         }
 
         private string ErrorMessage
@@ -105,6 +107,13 @@ namespace MotionSensorToWeMo.Model
             ErrorMessage = null;
         }
 
+        private void Initialize()
+        {
+            Controller = _emulateGpio ? GpioController.GetMemoryGpioController() : GpioController.GetNativeDefaultGpioController();
+            InitializePin();
+        }
+
+        [DataMember]
         public Boolean? EmulateGpio
         {
             get
@@ -124,12 +133,15 @@ namespace MotionSensorToWeMo.Model
                         _sensorPin = null;
                     }
                 }
-
-                Controller = _emulateGpio ? GpioController.GetMemoryGpioController() : GpioController.GetNativeDefaultGpioController();
-                InitializePin();
+                Initialize();
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+                }
             }
         }
 
+        [DataMember]
         public string PinNumber
         {
             get
@@ -140,6 +152,10 @@ namespace MotionSensorToWeMo.Model
             {
                 _pinNumber = value;
                 InitializePin();
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+                }
             }
         }
 
