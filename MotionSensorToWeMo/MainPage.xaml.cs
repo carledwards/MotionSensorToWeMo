@@ -19,6 +19,8 @@ using System.ComponentModel;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using Windows.Storage;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace MotionSensorToWeMo
 {
@@ -125,7 +127,6 @@ namespace MotionSensorToWeMo
                 System.Diagnostics.Debug.WriteLine(ex);
             }
 
-            // initialize if anything went wrong
             if (mad == null)
             {
                 mad = new ModelAppData();
@@ -144,7 +145,28 @@ namespace MotionSensorToWeMo
             mad.ProgramModel.Initialize(WeMoServiceModel);
             mad.ProgramModel.PropertyChanged += ProgramModel_PropertyChanged;
             mad.MotionSensorModel.PropertyChanged += MotionSensorModel_PropertyChanged;
+
             this.ModelAppData = mad;
+        }
+
+        private void programDeviceList_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            FrameworkElement senderElement = sender as FrameworkElement;
+            FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+            flyoutBase.ShowAt(senderElement);
+        }
+
+        private void FlyoutDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var menuFlyoutItem = sender as MenuFlyoutItem;
+            if (menuFlyoutItem != null)
+            {
+                var deviceName = menuFlyoutItem.DataContext as string;
+                if (deviceName != null)
+                {
+                    ModelAppData.ProgramModel.Devices.Remove(deviceName);
+                }
+            }
         }
     }
 }
