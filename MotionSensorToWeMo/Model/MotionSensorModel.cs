@@ -76,6 +76,12 @@ namespace MotionSensorToWeMo.Model
                 return;
             }
 
+            if (_sensorPin != null)
+            {
+                _sensorPin.Dispose();
+                _sensorPin = null;
+            }
+
             int pinAsNumber;
             try
             {
@@ -92,7 +98,16 @@ namespace MotionSensorToWeMo.Model
                 return;
             }
 
-            _sensorPin = _controller.OpenPin(pinAsNumber);
+            try
+            {
+                _sensorPin = _controller.OpenPin(pinAsNumber);
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = "Pin not available";
+                return;
+            }
+
             _sensorPin.SetDriveMode(Windows.Devices.Gpio.GpioPinDriveMode.Input);
             _sensorPin.ValueChanged += _sensorPin_ValueChanged;
             if (_sensorPin is IGpioPinImpersonator)
