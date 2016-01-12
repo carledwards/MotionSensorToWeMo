@@ -13,105 +13,86 @@
         <util:BooleanToVisibilityConverter x:Key="VisibilityConverter" />
     </Page.Resources>
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" x:Name="textBlock1" TextWrapping="Wrap" Text="Devices Found on Network"/>
-                <ProgressBar Grid.Row="0" Grid.Column="1" IsIndeterminate="True" Visibility="{x:Bind WeMoServiceModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
-                <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" ItemsSource="{x:Bind WeMoServiceModel.Devices, Mode=OneWay}" BorderThickness="1" BorderBrush="Black">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="model:DeviceModel">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="125"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="{x:Bind DeviceName}" VerticalAlignment="Center"/>
-                                <ToggleSwitch Grid.Column="1" IsOn="{x:Bind State, Mode=TwoWay}" VerticalAlignment="Center"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" x:Name="textBlock2" TextWrapping="Wrap" Text="Motion Sensor" />
-                <Grid Grid.Row="1" BorderBrush="Black" BorderThickness="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Grid.Row="0" x:Name="textBlock3" TextWrapping="Wrap" Text="Pin Number:" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <TextBox Grid.Column="1" Grid.Row="0" x:Name="motionSensorPinNumber" TextWrapping="Wrap" Text="{x:Bind ModelAppData.MotionSensorModel.PinNumber, Mode=TwoWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <TextBlock Grid.Column="0" Grid.Row="1" x:Name="textBlock" TextWrapping="Wrap" Text="Pin State:" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <TextBlock Grid.Column="1" Grid.Row="1" x:Name="motionSensorPinState" TextWrapping="Wrap" Text="{x:Bind ModelAppData.MotionSensorModel.PinState, Mode=OneWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <CheckBox Grid.Column="0" Grid.Row="2" x:Name="checkBox" Content="Emulate Gpio" IsChecked="{x:Bind ModelAppData.MotionSensorModel.EmulateGpio, Mode=TwoWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <Button Grid.Column="1" Grid.Row="2" x:Name="button" Content="Trigger" Visibility="{x:Bind ModelAppData.MotionSensorModel.AllowImpersonatingMotionSensor, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" Click="{x:Bind ModelAppData.MotionSensorModel.TriggerMotionSensor}" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                </Grid>
-            </Grid>
+    <StackPanel>
+        
+        <StackPanel Style="{StaticResource StackPanelGroup}">
+            <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DevicesOnNetworkTitle" Text=""/>
+            <ListView Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" 
+                      x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" 
+                      ItemsSource="{x:Bind WeMoServiceModel.Devices, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:DeviceModel">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource ListViewTextBlockStyle}" Grid.Column="0" Text="{x:Bind DeviceName}"/>
+                            <ToggleSwitch Style="{StaticResource ToggleSwitchStyle}" Grid.Column="1" 
+                                          IsOn="{x:Bind State, Mode=TwoWay}" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Height="5">
+                <ProgressBar IsIndeterminate="True" Visibility="{x:Bind WeMoServiceModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="Program" />
-                <Grid Grid.Row="1" BorderBrush="Black" BorderThickness="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Text="Devices:"></TextBlock>
-                    <ListView x:Name="programDeviceList" SelectionMode="None" AllowDrop="True" DragOver="programDeviceList_DragOver" Drop="programDeviceList_Drop" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{x:Bind ModelAppData.ProgramModel.Devices, Mode=OneWay}" MinHeight="25" BorderBrush="Black" BorderThickness="1" Margin="4,2,4,2">
+        
+        <StackPanel Style="{StaticResource StackPanelGroup}">
+            <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="MotionSensorTitle" Text="" />
+            <StackPanel Style="{StaticResource StackPanelWithBorderGroup}">
+                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
+                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="PinNumberLabel" Text=""/>
+                    <TextBox Style="{StaticResource TextBoxStyle}" x:Name="motionSensorPinNumber" 
+                             Text="{x:Bind ModelAppData.MotionSensorModel.PinNumber, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
+                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="PinStateLabel" Text=""/>
+                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Name="motionSensorPinState" 
+                               Text="{x:Bind ModelAppData.MotionSensorModel.PinState, Mode=OneWay}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
+                    <CheckBox Style="{StaticResource CheckBoxStyle}" x:Name="checkBox" x:Uid="EmulateGpioLabel" Content="" 
+                              IsChecked="{x:Bind ModelAppData.MotionSensorModel.EmulateGpio, Mode=TwoWay}"/>
+                    <Button Style="{StaticResource ButtonStyle}" x:Name="button" x:Uid="TriggerLabel" Content="" 
+                            Visibility="{x:Bind ModelAppData.MotionSensorModel.AllowImpersonatingMotionSensor, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" 
+                            Click="{x:Bind ModelAppData.MotionSensorModel.TriggerMotionSensor}"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        
+        <StackPanel Style="{StaticResource StackPanelGroup}">
+            <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="ProgramTitle" Text=""/>
+            <StackPanel Style="{StaticResource StackPanelWithBorderGroup}">
+                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
+                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DevicesLabel" Text=""/>
+                    <ListView x:Name="programDeviceList" Style="{StaticResource ListViewStyle}" SelectionMode="None" AllowDrop="True" 
+                              DragOver="programDeviceList_DragOver" Drop="programDeviceList_Drop" ItemsSource="{x:Bind ModelAppData.ProgramModel.Devices, Mode=OneWay}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="x:String">
                                 <Grid RightTapped="programDeviceList_RightTapped">
                                     <FlyoutBase.AttachedFlyout>
                                         <MenuFlyout>
-                                            <MenuFlyoutItem x:Name="DeleteButton" Text="Delete" Tag="{x:Bind }" Click="FlyoutDeleteButton_Click"/>
+                                            <MenuFlyoutItem x:Name="DeleteButton" x:Uid="DeleteButtonLabel" Text="" Tag="{x:Bind }" Click="FlyoutDeleteButton_Click"/>
                                         </MenuFlyout>
                                     </FlyoutBase.AttachedFlyout>
-                                    <TextBlock Grid.Column="0" Text="{x:Bind }" VerticalAlignment="Center" Margin="4,2,4,2"/>
+                                    <TextBlock Style="{StaticResource ListViewTextBlockStyle}" Grid.Column="0" Text="{x:Bind }"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Duration:" TextWrapping="Wrap" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{x:Bind ModelAppData.ProgramModel.DurationInSeconds, Mode=TwoWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
-
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Status:" TextWrapping="Wrap" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ModelAppData.ProgramModel.Status, Mode=OneWay}" VerticalAlignment="Center" Margin="4,2,4,2"/>
-                </Grid>
-            </Grid>
+                </StackPanel>
+                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
+                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DurationLabel" Text=""/>
+                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{x:Bind ModelAppData.ProgramModel.DurationInSeconds, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
+                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="StatusLabel" Text=""/>
+                    <TextBlock Style="{StaticResource TextBlockStyle}" Text="{x:Bind ModelAppData.ProgramModel.Status, Mode=OneWay}"/>
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
+        
     </StackPanel>
 </Page>

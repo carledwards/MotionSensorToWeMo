@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Threading;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Core;
 
 namespace MotionSensorToWeMo.Model
@@ -24,11 +25,12 @@ namespace MotionSensorToWeMo.Model
     {
         private ObservableSetCollection<string> _deviceNames = new ObservableSetCollection<string>();
         private string _durationInSeconds;
-        private string _status;
+        private string _statusKey;
         private bool _isRunning = false;
         private Timer _endProgramTimer;
         private List<DeviceModel> _devicesTriggered;
         private WeMoServiceModel _serviceModel;
+        private ResourceLoader _resourceLoader;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -38,6 +40,7 @@ namespace MotionSensorToWeMo.Model
 
         public void Initialize(WeMoServiceModel serviceModel)
         {
+            _resourceLoader = new ResourceLoader();
             _serviceModel = serviceModel;
             _endProgramTimer = new Timer(Timer_ProgramComplete, null, Timeout.Infinite, Timeout.Infinite);
             _deviceNames.CollectionChanged += _deviceNames_CollectionChanged;
@@ -106,7 +109,7 @@ namespace MotionSensorToWeMo.Model
         {
             if (this._deviceNames.Count == 0)
             {
-                Status = "No Devices";
+                Status = "NoDevices";
                 return false;
             }
             try
@@ -114,18 +117,18 @@ namespace MotionSensorToWeMo.Model
                 int duration = Int32.Parse(_durationInSeconds);
                 if (duration <= 0)
                 {
-                    Status = "Invalid Duration";
+                    Status = "InvalidDuration";
                     return false;
                 }
             }
             catch (FormatException e)
             {
-                Status = "Invalid Duration";
+                Status = "InvalidDuration";
                 return false;
             }
             catch (ArgumentNullException e)
             {
-                Status = "Invalid Duration";
+                Status = "InvalidDuration";
                 return false;
             }
             Status = IsRunning ? "Running" : "Idle";
@@ -137,13 +140,17 @@ namespace MotionSensorToWeMo.Model
             get
             {
                 ValidateAndUpdateStatus();
-                return _status;
+                if (_statusKey == null)
+                {
+                    return null;
+                }
+                return _resourceLoader.GetString(_statusKey);
             }
             set
             {
-                if (_status != value)
+                if (_statusKey != value)
                 {
-                    _status = value;
+                    _statusKey = value;
                     if (PropertyChanged != null)
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs("Status"));

@@ -12,6 +12,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Core;
 using WindowsDevices.Gpio;
 
@@ -23,8 +24,10 @@ namespace MotionSensorToWeMo.Model
         private IGpioPin _sensorPin;
         private bool _emulateGpio = true;
         private string _pinNumber;
-        private string _errorMessage;
+        private string _errorMessageKey;
         private IGpioController _controller;
+        private ResourceLoader _resourceLoader;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -37,11 +40,15 @@ namespace MotionSensorToWeMo.Model
         {
             get
             {
-                return _errorMessage;
+                if (_errorMessageKey == null)
+                {
+                    return null;
+                }
+                return _resourceLoader.GetString(_errorMessageKey);
             }
             set
             {
-                _errorMessage = value;
+                _errorMessageKey = value;
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("PinState"));
@@ -60,7 +67,7 @@ namespace MotionSensorToWeMo.Model
                 _controller = value;
                 if (_controller == null)
                 {
-                    ErrorMessage = "Gpio not available";
+                    ErrorMessage = "GpioNotAvailable";
                 }
                 if (PropertyChanged != null)
                 {
@@ -89,12 +96,12 @@ namespace MotionSensorToWeMo.Model
             }
             catch (FormatException e)
             {
-                ErrorMessage = "Pin number invalid";
+                ErrorMessage = "PinNumberInvalid";
                 return;
             }
             catch (ArgumentNullException e)
             {
-                ErrorMessage = "Pin number not set";
+                ErrorMessage = "PinNumberNotSet";
                 return;
             }
 
@@ -104,7 +111,7 @@ namespace MotionSensorToWeMo.Model
             }
             catch (Exception e)
             {
-                ErrorMessage = "Pin not available";
+                ErrorMessage = "PinNotAvailable";
                 return;
             }
 
@@ -124,6 +131,7 @@ namespace MotionSensorToWeMo.Model
 
         private void Initialize()
         {
+            _resourceLoader = new ResourceLoader();
             Controller = _emulateGpio ? GpioController.GetMemoryGpioController() : GpioController.GetNativeDefaultGpioController();
             InitializePin();
         }
@@ -180,11 +188,11 @@ namespace MotionSensorToWeMo.Model
             {
                 if (_sensorPin == null)
                 {
-                    return _errorMessage != null ? _errorMessage : "Unknown";
+                    return ErrorMessage != null ? ErrorMessage : _resourceLoader.GetString("Unknown");
                 }
                 else
                 {
-                    return _sensorPin.Read() == Windows.Devices.Gpio.GpioPinValue.High ? "High" : "Low";
+                    return _sensorPin.Read() == Windows.Devices.Gpio.GpioPinValue.High ? _resourceLoader.GetString("High") : _resourceLoader.GetString("Low");
                 }
             }
         }
