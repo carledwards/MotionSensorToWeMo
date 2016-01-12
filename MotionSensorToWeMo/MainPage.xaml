@@ -65,24 +65,22 @@
         <StackPanel Style="{StaticResource StackPanelGroup}">
             <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="ProgramTitle" Text=""/>
             <StackPanel Style="{StaticResource StackPanelWithBorderGroup}">
-                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DevicesLabel" Text=""/>
-                    <ListView x:Name="programDeviceList" Style="{StaticResource ListViewStyle}" SelectionMode="None" AllowDrop="True" 
-                              DragOver="programDeviceList_DragOver" Drop="programDeviceList_Drop" ItemsSource="{x:Bind ModelAppData.ProgramModel.Devices, Mode=OneWay}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <Grid RightTapped="programDeviceList_RightTapped">
-                                    <FlyoutBase.AttachedFlyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem x:Name="DeleteButton" x:Uid="DeleteButtonLabel" Text="" Tag="{x:Bind }" Click="FlyoutDeleteButton_Click"/>
-                                        </MenuFlyout>
-                                    </FlyoutBase.AttachedFlyout>
-                                    <TextBlock Style="{StaticResource ListViewTextBlockStyle}" Grid.Column="0" Text="{x:Bind }"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
+                <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DevicesLabel" Text=""/>
+                <ListView x:Name="programDeviceList" Style="{StaticResource ListViewStyle}" SelectionMode="None" AllowDrop="True" 
+                            DragOver="programDeviceList_DragOver" Drop="programDeviceList_Drop" ItemsSource="{x:Bind ModelAppData.ProgramModel.Devices, Mode=OneWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Grid RightTapped="programDeviceList_RightTapped">
+                                <FlyoutBase.AttachedFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem x:Name="DeleteButton" x:Uid="DeleteButtonLabel" Text="" Tag="{x:Bind }" Click="FlyoutDeleteButton_Click"/>
+                                    </MenuFlyout>
+                                </FlyoutBase.AttachedFlyout>
+                                <TextBlock Style="{StaticResource ListViewTextBlockStyle}" Grid.Column="0" Text="{x:Bind }"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
                     <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DurationLabel" Text=""/>
                     <TextBox Style="{StaticResource TextBoxStyle}" Text="{x:Bind ModelAppData.ProgramModel.DurationInSeconds, Mode=TwoWay}"/>
