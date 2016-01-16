@@ -34,8 +34,8 @@ namespace MotionSensorToWeMo
 
         public MainPage()
         {
-            this.InitializeComponent();
             Initialize();
+            this.InitializeComponent();
         }
 
         private void programDeviceList_DragOver(object sender, Windows.UI.Xaml.DragEventArgs e)
