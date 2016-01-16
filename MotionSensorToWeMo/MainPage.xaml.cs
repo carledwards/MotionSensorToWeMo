@@ -31,6 +31,7 @@ namespace MotionSensorToWeMo
         public WeMoServiceModel WeMoServiceModel { get; set; }
         private WeMoService _wemo = new WeMoService();
         private ModelAppData ModelAppData { get; set; }
+        private DispatcherTimer _timer;
 
         public MainPage()
         {
@@ -147,6 +148,12 @@ namespace MotionSensorToWeMo
             mad.MotionSensorModel.PropertyChanged += MotionSensorModel_PropertyChanged;
 
             this.ModelAppData = mad;
+
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(0.5);
+            _timer.Tick += RefreshTime_Tick;
+            _timer.Start();
+
         }
 
         private void programDeviceList_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -167,6 +174,12 @@ namespace MotionSensorToWeMo
                     ModelAppData.ProgramModel.Devices.Remove(deviceName);
                 }
             }
+        }
+
+        void RefreshTime_Tick(object sender, object e)
+        {
+            DateTime dt = DateTime.Now;
+            currentTime.Text = dt.ToString();
         }
     }
 }

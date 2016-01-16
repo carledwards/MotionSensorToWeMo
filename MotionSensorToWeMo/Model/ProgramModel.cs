@@ -31,6 +31,9 @@ namespace MotionSensorToWeMo.Model
         private List<DeviceModel> _devicesTriggered;
         private WeMoServiceModel _serviceModel;
         private ResourceLoader _resourceLoader;
+        private TimeSpan _sunrise;
+        private TimeSpan _sunset;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -105,6 +108,32 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
+        [DataMember]
+        public TimeSpan Sunrise
+        {
+            get { return _sunrise; }
+            set {
+                _sunrise = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+                }
+            }
+        }
+
+        [DataMember]
+        public TimeSpan Sunset
+        {
+            get { return _sunset; }
+            set {
+                _sunset = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
+                }
+            }
+        }
+
         public bool ValidateAndUpdateStatus()
         {
             if (this._deviceNames.Count == 0)
@@ -130,6 +159,14 @@ namespace MotionSensorToWeMo.Model
             {
                 Status = "InvalidDuration";
                 return false;
+            }
+            if (_sunrise == null)
+            {
+                Status = "SunriseNotSet";
+            }
+            if (_sunset == null)
+            {
+                Status = "SunsetNotSet";
             }
             Status = IsRunning ? "Running" : "Idle";
             return true;
@@ -169,6 +206,12 @@ namespace MotionSensorToWeMo.Model
             {
                 return;
             }
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            if (currentTime > _sunrise && currentTime < _sunset)
+            {
+                return;
+            }
+
             _devicesTriggered.Clear();
             IsRunning = true;
             foreach (string deviceName in _deviceNames)

@@ -14,11 +14,12 @@
     </Page.Resources>
 
     <StackPanel>
-        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Time:"/>
+            <TextBlock x:Name="currentTime"/>
+        </StackPanel>
         <StackPanel>
-            <TextBlock x:Uid="DevicesOnNetworkTitle" Text=""/>
-            <ListView
-                      x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" 
+            <ListView x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" 
                       ItemsSource="{x:Bind WeMoServiceModel.Devices, Mode=OneWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:DeviceModel">
@@ -33,7 +34,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <StackPanel Height="5">
+            <StackPanel Height="3">
                 <ProgressBar IsIndeterminate="True" Visibility="{x:Bind WeMoServiceModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
             </StackPanel>
         </StackPanel>
@@ -83,6 +84,14 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Uid="DurationLabel" Text=""/>
                     <TextBox Text="{x:Bind ModelAppData.ProgramModel.DurationInSeconds, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="SunriseLabel" Text=""/>
+                    <TimePicker Time="{x:Bind ModelAppData.ProgramModel.Sunrise, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="SunsetLabel" Text=""/>
+                    <TimePicker Time="{x:Bind ModelAppData.ProgramModel.Sunset, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Uid="StatusLabel" Text=""/>
