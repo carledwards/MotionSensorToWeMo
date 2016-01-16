@@ -53,7 +53,7 @@ namespace MotionSensorToWeMo.Model
                         PropertyChanged(this, new PropertyChangedEventArgs("State"));
                         PropertyChanged(this, new PropertyChangedEventArgs("ButtonStateTitle"));
                     }
-                    _wemoServiceModel.WeMoService.SendDeviceState(_device);
+                    _wemoServiceModel.WeMoService.SendDeviceStateAsync(_device);
                 }
             }
         }
@@ -64,13 +64,13 @@ namespace MotionSensorToWeMo.Model
             return (this.DeviceName.Equals(other.DeviceName));
         }
 
-        public void OnStateChange(WeMoDevice device, bool state)
+        public async void OnStateChangeAsync(WeMoDevice device, bool state)
         {
             if (device != _device)
             {
                 return;
             }
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                         CoreDispatcherPriority.High,
                         () =>
                         {

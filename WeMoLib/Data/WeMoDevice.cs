@@ -75,7 +75,7 @@ namespace IoT.WeMo.Data
                     IWeMoDeviceCallback callback = Callback;
                     if (callback != null)
                     {
-                        callback.OnStateChange(this, value);
+                        callback.OnStateChangeAsync(this, value);
                     }
                 }
             }

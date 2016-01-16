@@ -94,12 +94,12 @@ namespace MotionSensorToWeMo.Model
             {
                 pinAsNumber = Int32.Parse(_pinNumber);
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 ErrorMessage = "PinNumberInvalid";
                 return;
             }
-            catch (ArgumentNullException e)
+            catch (ArgumentNullException)
             {
                 ErrorMessage = "PinNumberNotSet";
                 return;
@@ -109,14 +109,14 @@ namespace MotionSensorToWeMo.Model
             {
                 _sensorPin = _controller.OpenPin(pinAsNumber);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 ErrorMessage = "PinNotAvailable";
                 return;
             }
 
             _sensorPin.SetDriveMode(Windows.Devices.Gpio.GpioPinDriveMode.Input);
-            _sensorPin.ValueChanged += _sensorPin_ValueChanged;
+            _sensorPin.ValueChanged += _sensorPin_ValueChangedAsync;
             if (_sensorPin is IGpioPinImpersonator)
             {
                 (_sensorPin as IGpioPinImpersonator).SetPinValue(Windows.Devices.Gpio.GpioPinValue.Low);
@@ -151,7 +151,6 @@ namespace MotionSensorToWeMo.Model
                     _emulateGpio = (Boolean)value;
                     if (_sensorPin != null)
                     {
-                        _sensorPin.ValueChanged -= _sensorPin_ValueChanged;
                         _sensorPin.Dispose();
                         _sensorPin = null;
                     }
@@ -213,11 +212,11 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
-        private void _sensorPin_ValueChanged(IGpioPin sender, IGpioPinValueChangedEventArgs args)
+        private async void _sensorPin_ValueChangedAsync(IGpioPin sender, IGpioPinValueChangedEventArgs args)
         {
             if (PropertyChanged != null)
             {
-                Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                             CoreDispatcherPriority.High,
                             () =>
                             {

@@ -13,6 +13,6 @@ namespace IoT.WeMo.Data
 {
     public interface IWeMoDeviceCallback
     {
-        void OnStateChange(WeMoDevice device, bool state);
+        void OnStateChangeAsync(WeMoDevice device, bool state);
     }
 }

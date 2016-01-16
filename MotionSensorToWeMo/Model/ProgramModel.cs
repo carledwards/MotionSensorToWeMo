@@ -42,7 +42,7 @@ namespace MotionSensorToWeMo.Model
         {
             _resourceLoader = new ResourceLoader();
             _serviceModel = serviceModel;
-            _endProgramTimer = new Timer(Timer_ProgramComplete, null, Timeout.Infinite, Timeout.Infinite);
+            _endProgramTimer = new Timer(Timer_ProgramCompleteAsync, null, Timeout.Infinite, Timeout.Infinite);
             _deviceNames.CollectionChanged += _deviceNames_CollectionChanged;
             _devicesTriggered = new List<DeviceModel>();
         }
@@ -121,12 +121,12 @@ namespace MotionSensorToWeMo.Model
                     return false;
                 }
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 Status = "InvalidDuration";
                 return false;
             }
-            catch (ArgumentNullException e)
+            catch (ArgumentNullException)
             {
                 Status = "InvalidDuration";
                 return false;
@@ -192,9 +192,9 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
-        private void Timer_ProgramComplete(object stateInfo)
+        private async void Timer_ProgramCompleteAsync(object stateInfo)
         {
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                         CoreDispatcherPriority.High,
                         () =>
                         {

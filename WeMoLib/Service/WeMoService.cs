@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Windows.Foundation;
 using Windows.System.Threading;
 
 namespace IoT.WeMo.Service
@@ -114,11 +115,11 @@ namespace IoT.WeMo.Service
                     IWeMoServiceCallback callback = ServiceCallback;
                     if (callback != null)
                     {
-                        callback.OnDeviceFound(new WeMoDevice(friendlyName, wemoUri.Host, wemoUri.Port, location, state));
+                        callback.OnDeviceFoundAsync(new WeMoDevice(friendlyName, wemoUri.Host, wemoUri.Port, location, state));
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // ignore 
                 // TODO LOG
@@ -135,7 +136,7 @@ namespace IoT.WeMo.Service
             IWeMoServiceCallback callback = ServiceCallback;
             if (callback != null)
             {
-                callback.OnNetworkScanningChange(active);
+                callback.OnNetworkScanningChangeAsync(active);
             }
         }
 
@@ -164,15 +165,15 @@ namespace IoT.WeMo.Service
             }
         }
 
-        public void SendDeviceState(WeMoDevice device)
+        public async void SendDeviceStateAsync(WeMoDevice device)
         {
             if (device == null)
             {
                 return;
             }
-            ThreadPool.RunAsync(new WorkItemHandler((IAsyncAction) =>
-                MakeApiRequest(device.IpAddress, device.Port, "SetBinaryState",
-                    String.Format(SetBinaryStatePayloadTemplate, device.State ? "1" : "0"))));
+            await ThreadPool.RunAsync(new WorkItemHandler(async (IAsyncAction) =>
+                 await MakeApiRequest(device.IpAddress, device.Port, "SetBinaryState",
+                     String.Format(SetBinaryStatePayloadTemplate, device.State ? "1" : "0"))));
         }
     }
 }

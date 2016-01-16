@@ -110,7 +110,7 @@ namespace IoT.WeMo.UPnP
             await Discover();
         }
 
-        private async void Timer_DiscoveryCompleted(object stateInfo)
+        private void Timer_DiscoveryCompleted(object stateInfo)
         {
             if (_scanningNetworkCallback != null)
             {

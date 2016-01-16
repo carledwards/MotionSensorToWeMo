@@ -9,6 +9,7 @@
 //
 //*********************************************************
 
+using System;
 using IoT.WeMo.Service;
 using MotionSensorToWeMo.Util;
 using System.Collections.Generic;
@@ -99,9 +100,9 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
-        public void OnDeviceFound(WeMoDevice device)
+        public async void OnDeviceFoundAsync(WeMoDevice device)
         {
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                         CoreDispatcherPriority.High,
                         () =>
                         {
@@ -110,9 +111,9 @@ namespace MotionSensorToWeMo.Model
             );
         }
 
-        public void OnNetworkScanningChange(bool active)
+        public async void OnNetworkScanningChangeAsync(bool active)
         {
-            Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                         CoreDispatcherPriority.High,
                         () =>
                         {

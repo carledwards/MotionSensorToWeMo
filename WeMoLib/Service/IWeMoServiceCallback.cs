@@ -15,7 +15,7 @@ namespace IoT.WeMo.Service
 {
     public interface IWeMoServiceCallback
     {
-        void OnDeviceFound(WeMoDevice device);
-        void OnNetworkScanningChange(bool active);
+        void OnDeviceFoundAsync(WeMoDevice device);
+        void OnNetworkScanningChangeAsync(bool active);
     }
 }
