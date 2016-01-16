@@ -15,9 +15,9 @@
 
     <StackPanel>
         
-        <StackPanel Style="{StaticResource StackPanelGroup}">
-            <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DevicesOnNetworkTitle" Text=""/>
-            <ListView Style="{StaticResource ListViewStyle}" ItemContainerStyle="{StaticResource ListViewItemStyle}" 
+        <StackPanel>
+            <TextBlock x:Uid="DevicesOnNetworkTitle" Text=""/>
+            <ListView
                       x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" 
                       ItemsSource="{x:Bind WeMoServiceModel.Devices, Mode=OneWay}">
                 <ListView.ItemTemplate>
@@ -28,8 +28,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Style="{StaticResource ListViewTextBlockStyle}" Grid.Column="0" Text="{x:Bind DeviceName}"/>
-                            <ToggleSwitch Style="{StaticResource ToggleSwitchStyle}" Grid.Column="1" 
-                                          IsOn="{x:Bind State, Mode=TwoWay}" HorizontalAlignment="Right"/>
+                            <ToggleSwitch Grid.Column="1" IsOn="{x:Bind State, Mode=TwoWay}" HorizontalAlignment="Right"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -38,35 +37,35 @@
                 <ProgressBar IsIndeterminate="True" Visibility="{x:Bind WeMoServiceModel.ScanningNetwork, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
             </StackPanel>
         </StackPanel>
-        
-        <StackPanel Style="{StaticResource StackPanelGroup}">
-            <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="MotionSensorTitle" Text="" />
-            <StackPanel Style="{StaticResource StackPanelWithBorderGroup}">
-                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="PinNumberLabel" Text=""/>
-                    <TextBox Style="{StaticResource TextBoxStyle}" x:Name="motionSensorPinNumber" 
+
+        <StackPanel>
+            <TextBlock x:Uid="MotionSensorTitle" Text="" />
+            <StackPanel  Style="{StaticResource StackPanelWithBorderGroup}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="PinNumberLabel" Text=""/>
+                    <TextBox x:Name="motionSensorPinNumber" 
                              Text="{x:Bind ModelAppData.MotionSensorModel.PinNumber, Mode=TwoWay}"/>
                 </StackPanel>
-                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="PinStateLabel" Text=""/>
-                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Name="motionSensorPinState" 
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="PinStateLabel" Text=""/>
+                    <TextBlock x:Name="motionSensorPinState" 
                                Text="{x:Bind ModelAppData.MotionSensorModel.PinState, Mode=OneWay}"/>
                 </StackPanel>
-                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
-                    <CheckBox Style="{StaticResource CheckBoxStyle}" x:Name="checkBox" x:Uid="EmulateGpioLabel" Content="" 
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="checkBox" x:Uid="EmulateGpioLabel" Content="" 
                               IsChecked="{x:Bind ModelAppData.MotionSensorModel.EmulateGpio, Mode=TwoWay}"/>
-                    <Button Style="{StaticResource ButtonStyle}" x:Name="button" x:Uid="TriggerLabel" Content="" 
+                    <Button x:Name="button" x:Uid="TriggerLabel" Content="" 
                             Visibility="{x:Bind ModelAppData.MotionSensorModel.AllowImpersonatingMotionSensor, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" 
                             Click="{x:Bind ModelAppData.MotionSensorModel.TriggerMotionSensor}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
         
-        <StackPanel Style="{StaticResource StackPanelGroup}">
-            <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="ProgramTitle" Text=""/>
+        <StackPanel>
+            <TextBlock x:Uid="ProgramTitle" Text=""/>
             <StackPanel Style="{StaticResource StackPanelWithBorderGroup}">
-                <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DevicesLabel" Text=""/>
-                <ListView x:Name="programDeviceList" Style="{StaticResource ListViewStyle}" SelectionMode="None" AllowDrop="True" 
+                <TextBlock x:Uid="DevicesLabel" Text=""/>
+                <ListView x:Name="programDeviceList" SelectionMode="None" AllowDrop="True" 
                             DragOver="programDeviceList_DragOver" Drop="programDeviceList_Drop" ItemsSource="{x:Bind ModelAppData.ProgramModel.Devices, Mode=OneWay}">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="x:String">
@@ -81,13 +80,13 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="DurationLabel" Text=""/>
-                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{x:Bind ModelAppData.ProgramModel.DurationInSeconds, Mode=TwoWay}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="DurationLabel" Text=""/>
+                    <TextBox Text="{x:Bind ModelAppData.ProgramModel.DurationInSeconds, Mode=TwoWay}"/>
                 </StackPanel>
-                <StackPanel Style="{StaticResource StackPanelHorizontalGroup}">
-                    <TextBlock Style="{StaticResource TextBlockStyle}" x:Uid="StatusLabel" Text=""/>
-                    <TextBlock Style="{StaticResource TextBlockStyle}" Text="{x:Bind ModelAppData.ProgramModel.Status, Mode=OneWay}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="StatusLabel" Text=""/>
+                    <TextBlock Text="{x:Bind ModelAppData.ProgramModel.Status, Mode=OneWay}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
