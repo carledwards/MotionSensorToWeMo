@@ -9,6 +9,8 @@
 //
 //*********************************************************
 
+using System;
+
 namespace WindowsDevices.Gpio
 {
     class WindowsIoTGpioController : IGpioController

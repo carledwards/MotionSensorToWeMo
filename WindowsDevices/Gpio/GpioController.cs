@@ -9,6 +9,8 @@
 //
 //*********************************************************
 
+using System;
+
 namespace WindowsDevices.Gpio
 {
     public class GpioController

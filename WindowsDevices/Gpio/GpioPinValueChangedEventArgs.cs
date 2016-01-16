@@ -9,6 +9,7 @@
 //
 //*********************************************************
 
+using System;
 using Windows.Devices.Gpio;
 
 namespace WindowsDevices.Gpio
