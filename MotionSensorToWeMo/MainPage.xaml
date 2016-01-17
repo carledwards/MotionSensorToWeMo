@@ -15,10 +15,11 @@
 
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Time:"/>
+            <TextBlock x:Uid="TimeLabel"/>
             <TextBlock x:Name="currentTime"/>
         </StackPanel>
         <StackPanel>
+            <TextBlock x:Uid="DevicesOnNetworkTitle" Text="" />
             <ListView x:Name="foundDeviceList" CanDragItems="True" DragItemsStarting="foundDeviceList_DragItemsStarting" 
                       ItemsSource="{x:Bind WeMoServiceModel.Devices, Mode=OneWay}">
                 <ListView.ItemTemplate>
@@ -95,7 +96,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Uid="StatusLabel" Text=""/>
-                    <TextBlock Text="{x:Bind ModelAppData.ProgramModel.Status, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ModelAppData.ProgramModel.StatusMessage, Mode=OneWay}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

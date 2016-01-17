@@ -23,17 +23,17 @@ namespace MotionSensorToWeMo.Model
     [DataContract]
     public class ProgramModel : INotifyPropertyChanged
     {
+        public enum ProgramStatus { Error, Waiting, Sleeping, Running, Finished };
+
         private ObservableSetCollection<string> _deviceNames = new ObservableSetCollection<string>();
         private string _durationInSeconds;
-        private string _statusKey;
-        private bool _isRunning = false;
+        private string _statusMessageResourceKey;
         private Timer _endProgramTimer;
         private List<DeviceModel> _devicesTriggered;
         private WeMoServiceModel _serviceModel;
         private ResourceLoader _resourceLoader;
         private TimeSpan _sunrise;
         private TimeSpan _sunset;
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,22 +67,6 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
-        public bool IsRunning
-        {
-            get
-            {
-                return _isRunning;
-            }
-            set
-            {
-                if (_isRunning != value)
-                {
-                    _isRunning = value;
-                    ValidateAndUpdateStatus();
-                }
-            }
-        }
-
         [DataMember]
         public string DurationInSeconds
         {
@@ -92,17 +76,11 @@ namespace MotionSensorToWeMo.Model
             }
             set
             {
-                if (_durationInSeconds != value)
-                {
-                    _durationInSeconds = value;
-                    if (PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("DurationInSeconds"));
-                    }
-                }
-                ValidateAndUpdateStatus();
+                _durationInSeconds = value;
+                StatusMessage = ValidateProgramAndGetStatusMessageResourceKey();
                 if (PropertyChanged != null)
                 {
+                    PropertyChanged(this, new PropertyChangedEventArgs("DurationInSeconds"));
                     PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
                 }
             }
@@ -114,6 +92,7 @@ namespace MotionSensorToWeMo.Model
             get { return _sunrise; }
             set {
                 _sunrise = value;
+                StatusMessage = ValidateProgramAndGetStatusMessageResourceKey();
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
@@ -127,6 +106,7 @@ namespace MotionSensorToWeMo.Model
             get { return _sunset; }
             set {
                 _sunset = value;
+                StatusMessage = ValidateProgramAndGetStatusMessageResourceKey();
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
@@ -134,63 +114,87 @@ namespace MotionSensorToWeMo.Model
             }
         }
 
-        public bool ValidateAndUpdateStatus()
+        public ProgramStatus Status { get; set; }
+
+        private string ValidateProgramAndGetStatusMessageResourceKey()
         {
+            if (Status == ProgramStatus.Running)
+            {
+                return "Running";
+            }
+
             if (this._deviceNames.Count == 0)
             {
-                Status = "NoDevices";
-                return false;
+                Status = ProgramStatus.Error;
+                return "NoDevices";
             }
             try
             {
                 int duration = Int32.Parse(_durationInSeconds);
                 if (duration <= 0)
                 {
-                    Status = "InvalidDuration";
-                    return false;
+                    Status = ProgramStatus.Error;
+                    return "InvalidDuration";
                 }
             }
             catch (FormatException)
             {
-                Status = "InvalidDuration";
-                return false;
+                Status = ProgramStatus.Error;
+                return "InvalidDuration";
             }
             catch (ArgumentNullException)
             {
-                Status = "InvalidDuration";
-                return false;
+                Status = ProgramStatus.Error;
+                return "InvalidDuration";
             }
             if (_sunrise == null)
             {
-                Status = "SunriseNotSet";
+                Status = ProgramStatus.Error;
+                return "SunriseNotSet";
             }
             if (_sunset == null)
             {
-                Status = "SunsetNotSet";
+                Status = ProgramStatus.Error;
+                return "SunsetNotSet";
             }
-            Status = IsRunning ? "Running" : "Idle";
-            return true;
+
+            if (_sunrise >= _sunset)
+            {
+                Status = ProgramStatus.Error;
+                return "SunriseAfterSunset";
+            }
+
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            if (currentTime > _sunrise && currentTime < _sunset)
+            {
+                Status = ProgramStatus.Sleeping;
+                return "Sleeping";
+            }
+
+            Status = ProgramStatus.Waiting;
+            return "Waiting";
         }
 
-        public string Status
+        public string StatusMessage
         {
             get
             {
-                ValidateAndUpdateStatus();
-                if (_statusKey == null)
+                _statusMessageResourceKey = ValidateProgramAndGetStatusMessageResourceKey();
+                if (_statusMessageResourceKey == null)
                 {
                     return null;
                 }
-                return _resourceLoader.GetString(_statusKey);
+                var message = _resourceLoader.GetString(_statusMessageResourceKey);
+                return message;
             }
             set
             {
-                if (_statusKey != value)
+                if (_statusMessageResourceKey != value)
                 {
-                    _statusKey = value;
+                    _statusMessageResourceKey = value;
                     if (PropertyChanged != null)
                     {
-                        PropertyChanged(this, new PropertyChangedEventArgs("Status"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("StatusMessage"));
                     }
                 }
             }
@@ -198,22 +202,14 @@ namespace MotionSensorToWeMo.Model
 
         public void RunProgram()
         {
-            if (IsRunning)
-            {
-                return;
-            }
-            if (!ValidateAndUpdateStatus())
-            {
-                return;
-            }
-            TimeSpan currentTime = DateTime.Now.TimeOfDay;
-            if (currentTime > _sunrise && currentTime < _sunset)
+            StatusMessage = ValidateProgramAndGetStatusMessageResourceKey();
+            if (Status != ProgramStatus.Waiting)
             {
                 return;
             }
 
             _devicesTriggered.Clear();
-            IsRunning = true;
+            Status = ProgramStatus.Running;
             foreach (string deviceName in _deviceNames)
             {
                 DeviceModel device = _serviceModel.GetDeviceByName(deviceName);
@@ -228,7 +224,7 @@ namespace MotionSensorToWeMo.Model
 
         private void _deviceNames_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            ValidateAndUpdateStatus();
+            StatusMessage = ValidateProgramAndGetStatusMessageResourceKey();
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs("DataContractMemberChanged"));
@@ -246,7 +242,7 @@ namespace MotionSensorToWeMo.Model
                                 device.State = false;
                             }
                             _devicesTriggered.Clear();
-                            IsRunning = false;
+                            Status = ProgramStatus.Finished;
                         });
         }
     }

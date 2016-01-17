@@ -133,7 +133,7 @@
     <value>Emulate Gpio</value>
   </data>
   <data name="GpioNotAvailable" xml:space="preserve">
-    <value>Gpio Not Available</value>
+    <value>Gpio Not Available, maybe you are not running on an IoT device?</value>
   </data>
   <data name="High" xml:space="preserve">
     <value>High</value>
@@ -142,7 +142,7 @@
     <value>Idle</value>
   </data>
   <data name="InvalidDuration" xml:space="preserve">
-    <value>Invalid Duration</value>
+    <value>The Duration value is incorrect.  Please enter in a valid number.</value>
   </data>
   <data name="Low" xml:space="preserve">
     <value>Low</value>
@@ -151,19 +151,19 @@
     <value>Motion Sensor</value>
   </data>
   <data name="NoDevices" xml:space="preserve">
-    <value>No Devices</value>
+    <value>Must be at least one device in the Program.  Add one by dragging it in from the Devices on Network list.</value>
   </data>
   <data name="PinNotAvailable" xml:space="preserve">
-    <value>Pin Not Available</value>
+    <value>The corresponding pin for Pin Number is not available.  It might be reserved by the OS.</value>
   </data>
   <data name="PinNumberInvalid" xml:space="preserve">
-    <value>Pin Number Invalid</value>
+    <value>The Pin Number value is incorrect.  Please enter in a valid number.</value>
   </data>
   <data name="PinNumberLabel.Text" xml:space="preserve">
     <value>Pin Number:</value>
   </data>
   <data name="PinNumberNotSet" xml:space="preserve">
-    <value>Pin Number Not Set</value>
+    <value>The Pin Number value is incorrect.  Please enter in a valid number.</value>
   </data>
   <data name="PinStateLabel.Text" xml:space="preserve">
     <value>Pin State:</value>
@@ -172,27 +172,36 @@
     <value>Program</value>
   </data>
   <data name="Running" xml:space="preserve">
-    <value>Running</value>
+    <value>Program is Running</value>
+  </data>
+  <data name="Sleeping" xml:space="preserve">
+    <value>In daylight hours, the program is sleeping.</value>
   </data>
   <data name="StatusLabel.Text" xml:space="preserve">
     <value>Status:</value>
+  </data>
+  <data name="SunriseAfterSunset" xml:space="preserve">
+    <value>Sunrise must be before Sunset.  Verify you have the the correct time (is AM/PM swapped?).</value>
   </data>
   <data name="SunriseLabel.Text" xml:space="preserve">
     <value>Sunrise:</value>
   </data>
   <data name="SunriseNotSet" xml:space="preserve">
-    <value>Sunrise Not Set</value>
+    <value>Please set Sunrise</value>
   </data>
   <data name="SunsetLabel.Text" xml:space="preserve">
     <value>Sunset:</value>
   </data>
   <data name="SunsetNotSet" xml:space="preserve">
-    <value>Sunset Not Set</value>
+    <value>Please set Sunset</value>
+  </data>
+  <data name="TimeLabel.Text" xml:space="preserve">
+    <value>Time:</value>
   </data>
   <data name="TriggerLabel.Content" xml:space="preserve">
     <value>Trigger</value>
   </data>
-  <data name="Unknown" xml:space="preserve">
-    <value>Unknown</value>
+  <data name="Waiting" xml:space="preserve">
+    <value>Waiting for a trigger from the motion sensor.</value>
   </data>
 </root>
