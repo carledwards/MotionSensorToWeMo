@@ -1,7 +1,7 @@
 # Motion Sensor to WeMo
 
 ### Project Goals:
-* turn ON one (or more) exterior lights by detection motion
+* turn ON one (or more) exterior lights by detection motion
 * ability to manually turn lights ON and have them stay ON
 * use existing exterior house lights
 * experiment with the [Universal Windows Platform IoT Development][windows_iot] on the Raspberry Pi 2
