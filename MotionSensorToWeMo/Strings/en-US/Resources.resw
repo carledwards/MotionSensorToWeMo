@@ -133,7 +133,7 @@
     <value>Emulate Gpio</value>
   </data>
   <data name="GpioNotAvailable" xml:space="preserve">
-    <value>Gpio Not Available, maybe you are not running on an IoT device?</value>
+    <value>Gpio Not Available.  Are not running on an IoT device?</value>
   </data>
   <data name="High" xml:space="preserve">
     <value>High</value>
@@ -151,22 +151,22 @@
     <value>Motion Sensor</value>
   </data>
   <data name="NoDevices" xml:space="preserve">
-    <value>Must be at least one device in the Program.  Add one by dragging it in from the Devices on Network list.</value>
+    <value>No devices configured.  Add one by dragging it in from the discovered devices.</value>
   </data>
   <data name="PinNotAvailable" xml:space="preserve">
-    <value>The corresponding pin for Pin Number is not available.  It might be reserved by the OS.</value>
+    <value>The GPIO Pin # is not available.  It might be reserved by the OS.</value>
   </data>
   <data name="PinNumberInvalid" xml:space="preserve">
-    <value>The Pin Number value is incorrect.  Please enter in a valid number.</value>
+    <value>The GPIO Pin # value is incorrect.  Please enter in a valid number.</value>
   </data>
   <data name="PinNumberLabel.Text" xml:space="preserve">
-    <value>Pin Number:</value>
+    <value>GPIO Pin #:</value>
   </data>
   <data name="PinNumberNotSet" xml:space="preserve">
-    <value>The Pin Number value is incorrect.  Please enter in a valid number.</value>
+    <value>The GPIO Pin # value is incorrect.  Please enter in a valid number.</value>
   </data>
   <data name="PinStateLabel.Text" xml:space="preserve">
-    <value>Pin State:</value>
+    <value>GPIO Pin State:</value>
   </data>
   <data name="ProgramTitle.Text" xml:space="preserve">
     <value>Program</value>
