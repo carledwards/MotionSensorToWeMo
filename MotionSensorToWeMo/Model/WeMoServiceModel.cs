@@ -80,18 +80,15 @@ namespace MotionSensorToWeMo.Model
             _cacheLock.EnterWriteLock();
             try
             {
-                if (!Devices.Contains(device))
+                DeviceModel model = Devices.FirstOrDefault(x => x.DeviceName == device.DeviceName);
+                if (model != null)
                 {
-                    _devices.Add(device);
-                    _devicesByName[device.DeviceName] = device;
+                    model.State = device.State;
                 }
                 else
                 {
-                    DeviceModel model = Devices.FirstOrDefault(x => x.DeviceName == device.DeviceName);
-                    if (model != null)
-                    {
-                        model.State = device.State;
-                    }
+                    _devices.Add(device);
+                    _devicesByName[device.DeviceName] = device;
                 }
             }
             finally
