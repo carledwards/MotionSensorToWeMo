@@ -15,8 +15,12 @@
 
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock x:Uid="TimeLabel"/>
+            <TextBlock x:Uid="CurrentTimeLabel"/>
             <TextBlock x:Name="currentTime"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock x:Uid="TimeUntilRestartLabel"/>
+            <TextBlock x:Name="timeUntilRestart"/>
         </StackPanel>
         <StackPanel>
             <TextBlock x:Uid="DevicesOnNetworkTitle" Text="" />

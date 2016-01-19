@@ -26,15 +26,19 @@ namespace MotionSensorToWeMo
 {
     public sealed partial class MainPage : Page
     {
-        private const string APPLICATION_DATA_FILENAME = "app_data_v1_a.json";
+        private const string APPLICATION_DATA_FILENAME = "app_data_v2.json";
 
         public WeMoServiceModel WeMoServiceModel { get; set; }
+
+        private readonly TimeSpan MaxUptime = new TimeSpan(6, 0, 0);
         private WeMoService _wemo = new WeMoService();
         private ModelAppData ModelAppData { get; set; }
         private DispatcherTimer _timer;
+        private DateTime _applicationStartTime;
 
         public MainPage()
         {
+            _applicationStartTime = DateTime.Now;
             Initialize();
             this.InitializeComponent();
         }
@@ -180,6 +184,29 @@ namespace MotionSensorToWeMo
         {
             DateTime dt = DateTime.Now;
             currentTime.Text = dt.ToString();
+
+            // Windows IoT isn't stable for long periods.  We try and force shutdown the system after 6 hours.
+            // I could use Environment.TickCount to see if the system was up too long, but I wanted it to be easier
+            // for deploying and testing.  The system can actually last for almost 24 hours, but 6 hours is a simple
+            // and frequent number.
+            TimeSpan ts = dt - _applicationStartTime;
+            timeUntilRestart.Text = (MaxUptime - ts).ToString();
+            if (ts > MaxUptime)
+            {
+                if (ModelAppData.ProgramModel.Halt())
+                {
+                    try
+                    {
+                        Windows.System.ShutdownManager.BeginShutdown(Windows.System.ShutdownKind.Restart, TimeSpan.Zero);
+                    }
+                    catch (Exception)
+                    {
+                        // shutdown is only allowed on IoT devices, we will just reset the start time
+                        _applicationStartTime = DateTime.Now;
+                        ModelAppData.ProgramModel.Resume();
+                    }
+                }
+            }
         }
     }
 }

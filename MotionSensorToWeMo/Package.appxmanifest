@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+<Package 
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" 
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
+  xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+  IgnorableNamespaces="uap mp">
   <Identity Name="CarlEdwards.MotionSensorToWeMo" Publisher="CN=carl" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="17a3d85b-8941-4897-961e-0167e1b76f5b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
@@ -25,5 +30,6 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <Capability Name="privateNetworkClientServer" />
+    <iot:Capability Name="systemManagement"/>
   </Capabilities>
 </Package>

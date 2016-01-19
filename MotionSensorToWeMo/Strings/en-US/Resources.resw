@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CurrentTimeLabel.Text" xml:space="preserve">
+    <value>Current Time:</value>
+  </data>
   <data name="DeleteButtonLabel.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="GpioNotAvailable" xml:space="preserve">
     <value>Gpio Not Available.  Are not running on an IoT device?</value>
+  </data>
+  <data name="Halted" xml:space="preserve">
+    <value>Program has been halted.</value>
   </data>
   <data name="High" xml:space="preserve">
     <value>High</value>
@@ -195,8 +201,8 @@
   <data name="SunsetNotSet" xml:space="preserve">
     <value>Please set Sunset</value>
   </data>
-  <data name="TimeLabel.Text" xml:space="preserve">
-    <value>Time:</value>
+  <data name="TimeUntilRestartLabel.Text" xml:space="preserve">
+    <value>Time Until Restart:</value>
   </data>
   <data name="TriggerLabel.Content" xml:space="preserve">
     <value>Trigger</value>
