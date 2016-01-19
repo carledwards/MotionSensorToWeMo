@@ -171,9 +171,21 @@ namespace IoT.WeMo.Service
             {
                 return;
             }
-            await ThreadPool.RunAsync(new WorkItemHandler(async (IAsyncAction) =>
-                 await MakeApiRequest(device.IpAddress, device.Port, "SetBinaryState",
-                     String.Format(SetBinaryStatePayloadTemplate, device.State ? "1" : "0"))));
+            await ThreadPool.RunAsync(
+                new WorkItemHandler(async (IAsyncAction) =>
+                    {
+                        try
+                        {
+                            await MakeApiRequest(device.IpAddress, device.Port, "SetBinaryState",
+                                String.Format(SetBinaryStatePayloadTemplate, device.State ? "1" : "0"));
+                        }
+                        catch (Exception)
+                        {
+                            // TODO log
+                        }
+                    }
+                )
+            );
         }
     }
 }
