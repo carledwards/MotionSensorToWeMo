@@ -16,7 +16,7 @@ using Windows.UI.Core;
 
 namespace MotionSensorToWeMo.Model
 {
-    public class DeviceModel : INotifyPropertyChanged, IEquatable<DeviceModel>, IWeMoDeviceCallback
+    public class DeviceModel : INotifyPropertyChanged, IWeMoDeviceCallback
     {
         private WeMoDevice _device;
         private WeMoServiceModel _wemoServiceModel;
@@ -56,12 +56,6 @@ namespace MotionSensorToWeMo.Model
                     _wemoServiceModel.WeMoService.SendDeviceStateAsync(_device);
                 }
             }
-        }
-
-        public bool Equals(DeviceModel other)
-        {
-            if (other == null) return false;
-            return (this.DeviceName.Equals(other.DeviceName));
         }
 
         public async void OnStateChangeAsync(WeMoDevice device, bool state)
